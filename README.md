@@ -1,29 +1,33 @@
-# 🛡️ ZAIN-SOC: AI-Driven Network Automation & Security Monitor
+# 🛡️ Hybrid Automated Threat Response System (SOC Automation)
 
-This project is a sophisticated Security Operations Center (SOC) Dashboard built with **React (Storybook)** and **Flask**. It features real-time monitoring and automated threat mitigation.
+This project demonstrates a full-cycle Cyber Security Operation Center (SOC) automation. It detects SQL Injection attacks in real-time, visualizes them on a dashboard with timestamps, and executes automated mitigation on both Host (Linux) and Network (FortiGate) levels.
 
-## 🚀 Key Features
+## 🚀 System Architecture
 
-* **Real-time Port Monitoring**: Live tracking of **Infoblox** and **Active Directory** status using socket-level checking.
-* **Automated Threat Mitigation**: Detects **SQL Injection** and **ICMP Flood** attacks and automatically triggers block commands on **FortiGate Firewall**.
-* **Dynamic Security Reports**: Generates professional PDF audit reports summarizing network health and blocked incidents.
-* **Infrastructure Integration**: Full connectivity with:
-    * **FortiGate** (API-based Blocking)
-    * **Infoblox** (IPAM Tracking)
-    * **Active Directory** (LDAP Status Monitoring)
 
-## 🛠️ Tech Stack
+1. **Detection Layer**: A Python Flask API (`network_api.py`) acts as a honeypot, capturing attack signatures and metadata (IP, Username, Timestamp).
+2. **Visualization Layer**: A React-based Storybook dashboard provides live monitoring of blocked threats.
+3. **Response Layer (Local)**: `block_ip.py` monitors the API and triggers `iptables` for immediate local host protection.
+4. **Response Layer (Enterprise)**: `fortigate_block.py` uses the **FortiGate REST API** to push attacker IPs into the network-wide firewall address list.
 
-* **Frontend**: React.js, Storybook
-* **Backend**: Python Flask, Flask-CORS
-* **Security Tools**: FortiGate API, FPDF (Reporting)
+## 🛠️ Technical Stack
+- **Backend**: Python, Flask, REST API.
+- **Frontend**: React, Storybook.
+- **Security**: Linux Iptables, FortiOS API.
+- **Data**: JSON-based real-time threat feed.
 
-## 📸 Screenshots
-- **Port Monitor**: Shows 83% Load on Infoblox and UP status for AD.
-- **Threat Monitor**: Displays detected critical threats for users like `ahmed` and `alice`.
+## 📸 Proof of Concept
+### Real-Time Monitoring with Timestamps
+The dashboard captures the exact moment of the attack:
+- **Attacker IP**: 192.168.47.110
+- **Status**: Blocked
+- **Timestamp**: Included for forensic logging.
 
-## ⚙️ Setup
-1. Activate virtual environment: `source venv/bin/activate`
-2. Install dependencies: `pip install flask flask-cors requests fpdf`
-3. Run the API: `python3 network_api.py`
-4. Start Storybook: `npm run storybook`
+### Automated Mitigation
+- **Local Firewall**: Successfully executed `DROP` command.
+- **Network Firewall**: Successfully created Address Object in FortiGate via API (`Status 200 OK`).
+
+## ⚙️ How to Run
+1. Start the monitoring API: `python3 network_api.py`
+2. Run the automated local blocker: `sudo python3 block_ip.py`
+3. Execute the FortiGate sync: `python3 fortigate_block.py`
