@@ -1,6 +1,6 @@
 # 🛡️ Hybrid Automated Threat Response System (SOC Automation)
 
-This project demonstrates a full-cycle Cyber Security Operation Center (SOC) automation. It detects SQL Injection attacks in real-time, visualizes them on a dashboard with timestamps, and executes automated mitigation on both Host (Linux) and Network (FortiGate) levels.
+"This system provides a full-loop defense mechanism. Initially, the attacker can ping the server. Once an SQLi attack is detected and timestamped by the Live Monitor, the Auto-Blocker executes an iptables drop and syncs with FortiGate. Post-mitigation, any ping from the attacker results in a Request Timeout."
 
 ## 🚀 System Architecture
 
