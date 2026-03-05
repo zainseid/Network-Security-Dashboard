@@ -1,57 +1,54 @@
-# 🛡️ Hybrid Automated Threat Response System (SOC Automation)
+🛡️ AI-Powered SOC Automation Stack: Real-Time Threat Detection & Network Isolation
+Stop Attacks in Milliseconds, Not Minutes.
+This project demonstrates a fully automated Security Operations Center (SOC) lifecycle, from zero-day threat detection to network-wide attacker isolation. By combining a custom-built threat detection API with the power of FortiGate Next-Generation Firewalls, this stack reduces the Mean Time to Respond (MTTR) from minutes to milliseconds, ensuring zero manual intervention.
 
-"This system provides a full-loop defense mechanism. Initially, the attacker can ping the server. Once an SQLi attack is detected and timestamped by the Live Monitor, the Auto-Blocker executes an iptables drop and syncs with FortiGate. Post-mitigation, any ping from the attacker results in a Request Timeout."
+🚀 Key Features
+⚡ Zero-Latency Detection: Custom Flask-based API instantly identifies malicious patterns, including SQL Injection and other web attacks, directly at the application layer.
 
-## 🚀 System Architecture
+📊 Dynamic SOC Dashboard: A high-visibility, real-time interface built with React & Storybook, providing analysts with a live feed of active threats, attacker IPs, and precise timestamps.
 
+🛡️ Automated FortiGate Integration: Seamlessly communicates with the FortiGate REST API to create on-the-fly Address Objects for identified attackers.
 
-1. **Detection Layer**: A Python Flask API (`network_api.py`) acts as a honeypot, capturing attack signatures and metadata (IP, Username, Timestamp).
-2. **Visualization Layer**: A React-based Storybook dashboard provides live monitoring of blocked threats.
-3. **Response Layer (Local)**: `block_ip.py` monitors the API and triggers `iptables` for immediate local host protection.
-4. **Response Layer (Enterprise)**: `fortigate_block.py` uses the **FortiGate REST API** to push attacker IPs into the network-wide firewall address list.
+🚫 Network-Wide Enforcement: Automatically injects attacker IPs into a high-priority DENY Policy, instantly isolating them from the entire corporate infrastructure, including internal servers like Active Directory.
 
-## 🛠️ Technical Stack
-- **Backend**: Python, Flask, REST API.
-- **Frontend**: React, Storybook.
-- **Security**: Linux Iptables, FortiOS API.
-- **Data**: JSON-based real-time threat feed.
-
-## 📸 Proof of Concept
-### Real-Time Monitoring with Timestamps
-The dashboard captures the exact moment of the attack:
-- **Attacker IP**: 192.168.47.110
-- **Status**: Blocked
-- **Timestamp**: Included for forensic logging.
-
-### Automated Mitigation
-- **Local Firewall**: Successfully executed `DROP` command.
-- **Network Firewall**: Successfully created Address Object in FortiGate via API (`Status 200 OK`).
-
-## ⚙️ How to Run
-1. Start the monitoring API: `python3 network_api.py`
-2. Run the automated local blocker: `sudo python3 block_ip.py`
-3. Execute the FortiGate sync: `python3 fortigate_block.py`
-   
-🛡️ How the SOC Automation Stack Works
-This project implements a full-loop Security Operations Center (SOC) automation, from threat detection to network-wide isolation. The system is divided into three main layers:
+📖 How It Works: The Full SOC Lifecycle
+This project implements a complete defense-in-depth strategy, divided into three powerful layers:
 
 1. Detection Layer (The Brain)
-Real-time Monitoring: The Flask-based API (network_api.py) intercepts incoming requests and scans for malicious patterns like SQL Injection (' OR 1=1).
+The Flask security API (network_api.py) acts as a vigilant sentinel, intercepting all incoming requests and scanning them for attack signatures.
 
-Contextual Logging: Upon detection, the system captures the attacker's metadata, including the precise Timestamp and Threat Type.
-
-Instant Rejection: The API immediately blocks the local request with a 403 Forbidden status to protect the web application.
+When a threat is detected, it is immediately logged with a unique Timestamp and Threat Type for full forensic accountability.
 
 2. Visualization Layer (The Dashboard)
-Live Monitoring: A React/Storybook frontend provides a high-visibility dashboard for security analysts.
+The Storybook dashboard provides a centralized "source of truth" for security events.
 
-Automated Updates: The dashboard polls the security API every 3 seconds to display the latest active threats.
-
-Detailed Alerts: Each threat is displayed with its unique IP address, discovery time, and current enforcement status.
+It visualizes attack data, transforming raw logs into actionable intelligence for immediate situational awareness.
 
 3. Enforcement Layer (The Shield)
-Network Isolation: The backend triggers a script to communicate with the FortiGate Firewall via its REST API.
+An automation script (block_ip.py) acts as the "hands" of the system, instantly pushing the attacker's details to the FortiGate Firewall.
 
-Dynamic Addressing: The system automatically creates a new Address Object specifically for the attacker's IP.
+A new Address Object is created, and a top-of-the-list DENY policy is applied. This ensures that any subsequent traffic from the attacker IP is dropped, effectively preventing lateral movement and data exfiltration.
 
-Top-Level Blocking: The IP is added to a high-priority DENY Policy (Block_Automated_Attacks), ensuring the attacker is completely isolated from the entire corporate network, including internal servers like Active Directory.
+🛠️ Technology Stack
+Language: Python (Flask, Requests, Datetime)
+
+Frontend: React, Storybook
+
+Security: FortiGate Next-Generation Firewall (REST API)
+
+Environment: Linux (Web Server), Kali Linux (Attacker), Active Directory Server (Internal)
+
+📊 Visual Proof of Concept (PoC)
+Here is the visual evidence of the system in action, from detection to enforcement.
+
+1. Network Architecture & Attack Diagram
+This diagram illustrates the logical flow of the system. The attacker on Kali Linux targets the Web Server. The attack is detected, and a blocking command is sent to the FortiGate, which then isolates the attacker from all internal devices.
+
+2. Live Threat Detection Dashboard
+This screenshot from Storybook shows the live "Active Threats" feed. Notice how each attack is logged with a precise IP address and Discovery Time, indicating that the backend is successfully generating and sending this data.
+
+3. Automated FortiGate Address Object Creation
+As soon as an attack is logged, the automation script creates a corresponding Address Object in FortiGate. This image confirms the creation of AI_BLOCK_192_168_47_110 with a full host mask (255.255.255.255), proving the REST API integration is successful.
+
+4. Final Network Enforcement (The Block)
+This is the ultimate proof of successful automation. The Block_Automated_Attacks policy, created via API, is now in the top-of-list position. The action is set to DENY, effectively isolating the attacker from all destinations within the network, including internal resources that were previously reachable.
